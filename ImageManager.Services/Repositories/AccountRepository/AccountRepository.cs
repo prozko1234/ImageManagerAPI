@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using ImageManager.EntityFramework;
 using ImageManager.EntityFramework.Models;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System.Linq;
+using ImageManager.Logic.Hashing;
+using ImageManager.Services.DTOModels;
 
 namespace ImageManager.Services.Repositories.AccountRepository
 {
@@ -24,41 +23,51 @@ namespace ImageManager.Services.Repositories.AccountRepository
                 _applicationContext.SaveChanges();
         }
 
-        public string HashPassword(string password)
-        {
-            // generate a 128-bit salt using a secure PRNG
-            byte[] salt = new byte[128 / 8];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(salt);
-            }
-
-            // derive a 256-bit subkey (use HMACSHA1 with 10,000 iterations)
-            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA1,
-                iterationCount: 10000,
-                numBytesRequested: 256 / 8));
-            return hashed;
-        }
-
         public void RegisterUser(string email, string login, string password)
         {
+            var pass = Hashing.HashPassword(password);
             User user = new User
             {
                 Login = login,
                 Email = email,
-                Password = HashPassword(password),
+                Password = pass.HashedPassword,
+                Salt = pass.Salt,
                 Role = UserRoles.RegularUser
             };
             AddUser(user);
         }
 
-        public void WriteUserToDatabase()
+        public void RegisterAdmin(string email, string login, string password)
+        {
+            var pass = Hashing.HashPassword(password);
+            User user = new User
+            {
+                Login = login,
+                Email = email,
+                Password = pass.HashedPassword,
+                Salt = pass.Salt,
+                Role = UserRoles.Admin
+            };
+            AddUser(user);
+        }
+
+        public List<User> GetAllProfiles()
         {
             throw new NotImplementedException();
         }
 
+        public UserDTO LoginProfile(string username, string password)
+        {
+            var user = _applicationContext.Users.FirstOrDefault(x => x.Login == username);
+            if (user == null) return null;
+            if (Hashing.CheckPassword(password, user.Password, user.Salt))
+            {
+                return new UserDTO(){
+                    Login = user.Login,
+                    Email = user.Email,
+                    Role = user.Role};
+            }
+            else return null;
+        }
     }
 }

@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ImageManager.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20200601150848_Init")]
-    partial class Init
+    [Migration("20200613120846_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -41,6 +41,10 @@ namespace ImageManager.EntityFramework.Migrations
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
+
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

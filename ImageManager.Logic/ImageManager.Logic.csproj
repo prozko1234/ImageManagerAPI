@@ -5,8 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="3.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ImageManager.EntityFramework\ImageManager.EntityFramework.csproj" />
-    <ProjectReference Include="..\ImageManager.Logic\ImageManager.Logic.csproj" />
   </ItemGroup>
 
 </Project>

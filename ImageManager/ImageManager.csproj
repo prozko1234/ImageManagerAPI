@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ImageManager.EntityFramework\ImageManager.EntityFramework.csproj" />
+    <ProjectReference Include="..\ImageManager.Logic\ImageManager.Logic.csproj" />
     <ProjectReference Include="..\ImageManager.Services\ImageManager.Services.csproj" />
   </ItemGroup>
 

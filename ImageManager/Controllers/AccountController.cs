@@ -7,23 +7,19 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using ImageManager.EntityFramework.Models;
 using ImageManager.Services.Repositories.AccountRepository;
+using ImageManager.Services.DTOModels;
 
 namespace ImageManager.Controllers
 {
     public class AccountController : Controller
     {
-        private List<User> people = new List<User>
-        {
-            new User {Login="admin@gmail.com", Password="12345", Role = UserRoles.Admin },
-            new User { Login="qwerty@gmail.com", Password="55555", Role = UserRoles.RegularUser }
-        };
-
         private readonly IAccountRepository _accountRepository;
 
         public AccountController(IAccountRepository accountRepository)
         {
             _accountRepository = accountRepository;
         }
+
 
         [HttpPost("/token")]
         public IActionResult Token(string username, string password)
@@ -53,10 +49,9 @@ namespace ImageManager.Controllers
 
             return Json(response);
         }
-
         private ClaimsIdentity GetIdentity(string username, string password)
         {
-            User User = people.FirstOrDefault(x => x.Login == username && x.Password == password);
+            UserDTO User = _accountRepository.LoginProfile(username, password);
             if (User != null)
             {
                 var claims = new List<Claim>

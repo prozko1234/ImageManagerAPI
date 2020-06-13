@@ -2,7 +2,7 @@
 
 namespace ImageManager.EntityFramework.Migrations
 {
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,6 +15,7 @@ namespace ImageManager.EntityFramework.Migrations
                     Login = table.Column<string>(nullable: false),
                     Email = table.Column<string>(nullable: false),
                     Password = table.Column<string>(nullable: false),
+                    Salt = table.Column<string>(nullable: false),
                     Role = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
