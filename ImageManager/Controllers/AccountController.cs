@@ -8,6 +8,7 @@ using System.Security.Claims;
 using ImageManager.EntityFramework.Models;
 using ImageManager.Services.Repositories.AccountRepository;
 using ImageManager.Services.DTOModels;
+using Microsoft.AspNetCore.Cors;
 
 namespace ImageManager.Controllers
 {
@@ -20,10 +21,10 @@ namespace ImageManager.Controllers
             _accountRepository = accountRepository;
         }
 
-
         [HttpPost("/token")]
         public IActionResult Token(string username, string password)
         {
+            UserDTO userDTO = _accountRepository.LoginProfile(username, password);
             var identity = GetIdentity(username, password);
             if (identity == null)
             {
@@ -44,7 +45,9 @@ namespace ImageManager.Controllers
             var response = new
             {
                 access_token = encodedJwt,
-                username = identity.Name
+                username = identity.Name,
+                role = userDTO.Role.ToString(),
+                email = userDTO.Email
             };
 
             return Json(response);

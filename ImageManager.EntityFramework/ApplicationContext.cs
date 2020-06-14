@@ -16,5 +16,9 @@ namespace ImageManager.EntityFramework
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Folder> Folders { get; set; }
+        public DbSet<HashTag> HashTags { get; set; }
+        public DbSet<Image> Images { get; set; }
+        public DbSet<ImageTag> ImageTags { get; set; }
     }
 }

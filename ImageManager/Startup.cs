@@ -1,5 +1,6 @@
 using ImageManager.EntityFramework;
 using ImageManager.Services.Repositories.AccountRepository;
+using ImageManager.Services.Repositories.ImageRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace ImageManager
 {
@@ -29,19 +34,26 @@ namespace ImageManager
                            options.RequireHttpsMetadata = false;
                            options.TokenValidationParameters = new TokenValidationParameters
                            {
-                            ValidateIssuer = true,
-                            ValidIssuer = AuthOptions.ISSUER,
+                               ValidateIssuer = true,
+                               ValidIssuer = AuthOptions.ISSUER,
 
-                            ValidateAudience = true,
-                            ValidAudience = AuthOptions.AUDIENCE,
-                            ValidateLifetime = true,
+                               ValidateAudience = true,
+                               ValidAudience = AuthOptions.AUDIENCE,
+                               ValidateLifetime = true,
 
-                            IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                            ValidateIssuerSigningKey = true,
+                               IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                               ValidateIssuerSigningKey = true,
                            };
                        });
 
+            services.AddCors(c =>
+            {
+                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
+            });
+
             services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IImageRepository, ImageRepository>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddDbContext<ApplicationContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -65,6 +77,20 @@ namespace ImageManager
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), "public/images")),
+                RequestPath = "/images"
+            });
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                            Path.Combine(Directory.GetCurrentDirectory(), "public/images")),
+                RequestPath = "/images"
+            });
+
+            app.UseCors(options => options.AllowAnyOrigin());
 
             app.UseEndpoints(endpoints =>
             {
