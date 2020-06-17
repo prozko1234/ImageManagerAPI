@@ -23,7 +23,8 @@ namespace ImageManager
 
                 try
                 {
-                    SeedData.Initialize(services);
+                    var seedData = new SeedData();
+                    seedData.Initialize(services);
                 }
                 catch (Exception ex)
                 {

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ImageManager.Services.Repositories.ImageRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ImageManager.EntityFramework.Models;
 
 namespace ImageManager.Controllers
 {
@@ -22,10 +23,18 @@ namespace ImageManager.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        [HttpGet("writeImage")]
-        public async Task<int> WriteImage(IFormFile file)
+        [HttpPost("writeImage")]
+        public async Task<int> WriteImage(IFormFile file, int id)
         {
-            var uploads = Path.Combine(Directory.GetCurrentDirectory(), "public/images"); ;
+            string link;
+            var uploads = Path.Combine(Directory.GetCurrentDirectory(), "public/images");
+            try
+            {
+                link = _httpContextAccessor.HttpContext.Request.Host.Value;
+            }catch(Exception e)
+            {
+                return StatusCodes.Status404NotFound;
+            }
 
             if (file.Length > 0)
             {
@@ -35,7 +44,25 @@ namespace ImageManager.Controllers
                 }
             }
 
+            Image image = new Image
+            {
+                Name = file.FileName,
+                CreatedDate = DateTime.Now,
+                ParentId = id,
+                FilePath = Path.Combine(uploads, file.FileName),
+                FileLink = "https://" + link + "/images/" + file.FileName
+        };
+
+            _imageRepository.AddImage(image);
+
             return StatusCodes.Status200OK;
+        }
+
+        [HttpGet("getAllImages")]
+        public IActionResult GetAallImages()
+        {
+            var images = _imageRepository.GetAllImages();
+            return Json(images);
         }
     }
 }

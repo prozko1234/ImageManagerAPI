@@ -1,4 +1,5 @@
 ﻿using ImageManager.EntityFramework.Models;
+using ImageManager.Services.DTOModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,6 +12,8 @@ namespace ImageManager.Services.Repositories.ImageRepository
         void RemoveImage(Image image);
         void GetImage(int id);
         void GetImage(string tag);
-        void GetAllImages();
+        List<ImageDTO> GetAllImages();
+        List<string> GetPhotosAllTags(int photoId);
+        string GetTag(int id);
     }
 }

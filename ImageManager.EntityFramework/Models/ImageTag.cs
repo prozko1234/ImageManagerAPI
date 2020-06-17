@@ -10,6 +10,8 @@ namespace ImageManager.EntityFramework.Models
     {
         [Key]
         public int Id { get; set; }
+        public int TagId { get; set; }
+        public int ImageId { get; set; }
         [ForeignKey("TagId ")]
         public HashTag Tag { get; set; }
         [ForeignKey("ImageId ")]
