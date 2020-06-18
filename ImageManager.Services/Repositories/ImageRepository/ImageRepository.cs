@@ -30,6 +30,7 @@ namespace ImageManager.Services.Repositories.ImageRepository
             {
                 response.Add(new ImageDTO
                 {
+                    Id = item.Id,
                     FilePath = item.FilePath,
                     FileLink = item.FileLink,
                     Name = item.Name,
