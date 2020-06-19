@@ -9,6 +9,7 @@ using ImageManager.EntityFramework.Models;
 using ImageManager.Services.Repositories.AccountRepository;
 using ImageManager.Services.DTOModels;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ImageManager.Controllers
 {
@@ -76,6 +77,25 @@ namespace ImageManager.Controllers
         {
             _accountRepository.RegisterUser(email, login, password);
             return StatusCode(200);
+        }
+
+        [Authorize]
+        [HttpGet("/authentication")]
+        public IActionResult CheckAuth()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = _accountRepository.GetProfile(User.Identity.Name);
+                var response = new
+                {
+                    authStatus = User.Identity.IsAuthenticated,
+                    username = user.Login,
+                    email = user.Email,
+                    role = user.Role.ToString()
+                };
+                return Json(response);
+            }
+            return StatusCode(401);
         }
     }
 }

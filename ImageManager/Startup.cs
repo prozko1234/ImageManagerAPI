@@ -29,6 +29,8 @@ namespace ImageManager
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                        .AddJwtBearer(options =>
                        {
@@ -46,11 +48,6 @@ namespace ImageManager
                                ValidateIssuerSigningKey = true,
                            };
                        });
-
-            services.AddCors(c =>
-            {
-                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
-            });
 
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IImageRepository, ImageRepository>();
@@ -91,7 +88,7 @@ namespace ImageManager
                 RequestPath = "/images"
             });
 
-            app.UseCors(options => options.AllowAnyOrigin());
+            app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
             app.UseEndpoints(endpoints =>
             {

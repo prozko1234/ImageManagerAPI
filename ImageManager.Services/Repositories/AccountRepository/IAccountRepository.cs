@@ -13,5 +13,6 @@ namespace ImageManager.Services.Repositories.AccountRepository
         void AddUser(User user);
         List<User> GetAllProfiles();
         UserDTO LoginProfile(string username, string password);
+        UserDTO GetProfile(string username);
     }
 }

@@ -69,5 +69,14 @@ namespace ImageManager.Services.Repositories.AccountRepository
             }
             else return null;
         }
+
+        public UserDTO GetProfile(string username)
+        {
+            var user = _applicationContext.Users.FirstOrDefault(x => x.Login == username);
+            if (user != null)
+                return new UserDTO() { Login = user.Login, Email = user.Email, Role = user.Role};
+            else
+                return null;
+        }
     }
 }
