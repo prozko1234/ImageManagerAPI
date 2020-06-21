@@ -10,8 +10,7 @@ namespace ImageManager.Services.Repositories.ImageRepository
     {
         void AddImage(Image image);
         void RemoveImage(Image image);
-        void GetImage(int id);
-        void GetImage(string tag);
+        ImageDTO GetImage(int id);
         List<ImageDTO> GetAllImages();
         List<string> GetPhotosAllTags(int photoId);
         string GetTag(int id);

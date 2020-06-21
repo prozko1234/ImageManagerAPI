@@ -5,6 +5,7 @@ using ImageManager.EntityFramework;
 using ImageManager.EntityFramework.Models;
 using System.Linq;
 using ImageManager.Services.DTOModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace ImageManager.Services.Repositories.ImageRepository
 {
@@ -54,14 +55,20 @@ namespace ImageManager.Services.Repositories.ImageRepository
             return tagsList;
         }
 
-        public void GetImage(int id)
+        public ImageDTO GetImage(int id)
         {
-            throw new NotImplementedException();
-        }
-
-        public void GetImage(string tag)
-        {
-            throw new NotImplementedException();
+            var image = _applicationContext.Images.FirstOrDefault(x => x.Id == id);
+            var response = new ImageDTO
+            {
+                Id = image.Id,
+                FilePath = image.FilePath,
+                FileLink = image.FileLink,
+                Name = image.Name,
+                CreatedDate = image.CreatedDate,
+                ParentFolder = image.ParentFolder,
+                Tags = GetPhotosAllTags(image.Id)
+            };
+            return response;
         }
 
         public string GetTag(int id)
